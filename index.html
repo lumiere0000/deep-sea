@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Deep Submergence Vehicle</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="scroll-space"></div>
+
+  <main id="simulator" class="mode-white">
+    <div id="ocean-bg"></div>
+    <div id="ocean-particles"></div>
+    <div id="terrain-layer"></div>
+    <div id="mining-layer"></div>
+    <div id="debris-layer"></div>
+    <div id="marine-layer"></div>
+    <div id="fish-school-layer"></div>
+    <canvas id="jellyfish-layer"></canvas>
+    <canvas id="comb-jelly-layer"></canvas>
+    <div id="vignette"></div>
+
+    <!-- hidden reusable fish sprite -->
+    <svg width="0" height="0" style="position:absolute; visibility:hidden;">
+      <defs>
+        <symbol id="fish-symbol" viewBox="0 0 235 104">
+          <path
+            d="m 172.04828,20.913839 c 0.0489,-0.444179 -0.2178,-0.896934 -1.01784,-1.415715 -0.72801,-0.475049 -1.4826,-0.932948 -2.2149,-1.401138 -1.6035,-1.028129 -3.29018,-1.969653 -4.89798,-3.079244 -4.67074,-3.24131 -10.22127,-4.404923 -15.76322,-5.1509392 -2.27235,-0.286401 -4.81223,-0.168925 -6.72186,-1.574351 -1.48174,-1.081294 -4.04993,-4.828523 -6.86506,-6.456038 -0.4862,-0.290688 -2.77227,-1.44486897 -2.77227,-1.44486897 0,0 1.30939,3.55000597 1.60951,4.26429497 0.69542,1.644664 -0.38158,3.063809 -0.83262,4.642447 -0.29069,1.0418502 2.13772,0.8129002 2.26463,1.7827212 0.18179,1.432007 -4.15197,1.936211 -6.59152,2.417263 -3.65634,0.715146 -7.91635,2.082841 -11.56925,0.884071 -4.3046,-1.38313 -7.37269,-4.129669 -10.46566,-7.2354952 1.43801,6.7252892 5.4382,10.6028562 5.6157,11.4226162 0.18607,0.905509 -0.45961,1.091584 -1.04099,1.682394 -1.28967,1.265655 -6.91566,7.731125 -6.93366,9.781383 1.61379,-0.247815 3.56115,-1.660957 4.9803,-2.485862 1.58035,-0.905509 7.60593,-5.373029 9.29347,-6.065023 0.38587,-0.160351 5.0549,-1.531476 5.09434,-0.932949 0.0695,0.932949 -0.30784,1.137031 -0.18436,1.527189 0.22638,0.746016 1.44144,1.465449 2.02282,1.985088 1.50918,1.292237 3.21044,2.42841 4.27373,4.156252 1.49203,2.401827 1.55805,4.999163 1.98251,7.677102 0.99469,-0.111473 2.0091,-2.17545 2.55961,-2.992638 0.51278,-0.772598 2.38639,-4.07136 3.09725,-4.275442 0.67227,-0.204082 2.75511,0.958673 3.50284,1.180763 2.85973,0.848057 5.644,1.353976 8.56032,1.353976 3.50799,0.0094 12.726,0.258104 19.55505,-4.800226 0.75545,-0.567658 2.55703,-2.731104 2.55703,-2.731104 0,0 -0.37644,-0.577091 -1.04785,-0.790605 0.89779,-0.584808 1.8659,-1.211633 1.94993,-1.925922 z"
+            fill="#528484"
+          />
+          <path
+            d="m 234.99441,42.953992 c 0.0489,-0.44418 -0.2178,-0.896934 -1.01784,-1.415715 -0.72801,-0.47505 -1.4826,-0.932949 -2.2149,-1.401138 -1.6035,-1.02813 -3.29018,-1.969653 -4.89798,-3.079245 -4.67074,-3.24131 -10.22127,-4.404923 -15.76322,-5.150939 -2.27235,-0.286401 -4.81223,-0.168925 -6.72186,-1.574351 -1.48174,-1.081294 -4.04993,-4.828523 -6.86506,-6.456038 -0.4862,-0.290688 -2.77227,-1.444869 -2.77227,-1.444869 0,0 1.30939,3.550006 1.60951,4.264295 0.69542,1.644664 -0.38158,3.063809 -0.83262,4.642447 -0.29069,1.04185 2.13772,0.8129 2.26463,1.782721 0.18179,1.432007 -4.15197,1.936211 -6.59152,2.417263 -3.65634,0.715146 -7.91635,2.082842 -11.56925,0.884072 -4.3046,-1.383131 -7.37269,-4.12967 -10.46566,-7.235496 1.43801,6.725289 5.4382,10.602857 5.6157,11.422617 0.18607,0.905508 -0.45961,1.091583 -1.04099,1.682394 -1.28967,1.265654 -6.91566,7.731125 -6.93366,9.781382 1.61379,-0.247815 3.56115,-1.660957 4.9803,-2.485862 1.58035,-0.905509 7.60593,-5.373029 9.29347,-6.065023 0.38587,-0.160351 5.0549,-1.531476 5.09434,-0.932948 0.0695,0.932948 -0.30784,1.137031 -0.18436,1.527188 0.22638,0.746016 1.44144,1.46545 2.02282,1.985088 1.50918,1.292237 3.21044,2.42841 4.27373,4.156252 1.49203,2.401827 1.55805,4.999163 1.98251,7.677102 0.99469,-0.111473 2.0091,-2.17545 2.55961,-2.992638 0.51278,-0.772598 2.38639,-4.071359 3.09725,-4.275442 0.67227,-0.204082 2.75511,0.958673 3.50284,1.180763 2.85973,0.848057 5.644,1.353976 8.56032,1.353976 3.50799,0.0094 12.726,0.258104 19.55505,-4.800226 0.75545,-0.567658 2.55703,-2.731104 2.55703,-2.731104 0,0 -0.37644,-0.57709 -1.04785,-0.790605 0.89779,-0.584808 1.8659,-1.211633 1.94993,-1.925921 z"
+            fill="#528484"
+          />
+          <path
+            d="m 200.07076,80.737109 c 0.0489,-0.44418 -0.2178,-0.896934 -1.01784,-1.415715 -0.72801,-0.47505 -1.4826,-0.932949 -2.2149,-1.401138 -1.6035,-1.02813 -3.29018,-1.969653 -4.89798,-3.079245 -4.67074,-3.24131 -10.22127,-4.404923 -15.76322,-5.150939 -2.27235,-0.286401 -4.81223,-0.168925 -6.72186,-1.574351 -1.48174,-1.081294 -4.04993,-4.828523 -6.86506,-6.456038 -0.4862,-0.290688 -2.77227,-1.444869 -2.77227,-1.444869 0,0 1.30939,3.550006 1.60951,4.264295 0.69542,1.644664 -0.38158,3.063809 -0.83262,4.642447 -0.29069,1.04185 2.13772,0.8129 2.26463,1.782721 0.18179,1.432007 -4.15197,1.936211 -6.59152,2.417263 -3.65634,0.715146 -7.91635,2.082842 -11.56925,0.884072 -4.3046,-1.383131 -7.37269,-4.12967 -10.46566,-7.235496 1.43801,6.725289 5.4382,10.602857 5.6157,11.422617 0.18607,0.905508 -0.45961,1.091583 -1.04099,1.682394 -1.28967,1.265654 -6.91566,7.731125 -6.93366,9.781382 1.61379,-0.247815 3.56115,-1.660957 4.9803,-2.485862 1.58035,-0.905509 7.60593,-5.373029 9.29347,-6.065023 0.38587,-0.160351 5.0549,-1.531476 5.09434,-0.932948 0.0695,0.932948 -0.30784,1.137031 -0.18436,1.527188 0.22638,0.746016 1.44144,1.46545 2.02282,1.985088 1.50918,1.292237 3.21044,2.42841 4.27373,4.156252 1.49203,2.401827 1.55805,4.999163 1.98251,7.677102 0.99469,-0.111473 2.0091,-2.17545 2.55961,-2.992638 0.51278,-0.772598 2.38639,-4.071359 3.09725,-4.275442 0.67227,-0.204082 2.75511,0.958673 3.50284,1.180763 2.85973,0.848057 5.644,1.353976 8.56032,1.353976 3.50799,0.0094 12.726,0.258104 19.55505,-4.800226 0.75545,-0.567658 2.55703,-2.731104 2.55703,-2.731104 0,0 -0.37644,-0.57709 -1.04785,-0.790605 0.89779,-0.584808 1.8659,-1.211633 1.94993,-1.925921 z"
+            fill="#528484"
+          />
+          <path
+            d="m 77.275623,89.018799 c 0.0489,-0.44418 -0.2178,-0.896934 -1.01784,-1.415715 -0.72801,-0.47505 -1.4826,-0.932949 -2.2149,-1.401138 -1.6035,-1.02813 -3.29018,-1.969653 -4.89798,-3.079245 -4.67074,-3.24131 -10.22127,-4.404923 -15.76322,-5.150939 -2.272347,-0.286401 -4.812227,-0.168925 -6.721857,-1.574351 -1.48174,-1.081294 -4.04993,-4.828523 -6.86506,-6.456038 -0.4862,-0.290688 -2.77227,-1.444869 -2.77227,-1.444869 0,0 1.30939,3.550006 1.60951,4.264295 0.69542,1.644664 -0.38158,3.063809 -0.83262,4.642447 -0.29069,1.04185 2.13772,0.8129 2.26463,1.782721 0.18179,1.432007 -4.15197,1.936211 -6.59152,2.417263 -3.65634,0.715146 -7.91635,2.082842 -11.56925,0.884072 -4.3046,-1.383131 -7.37269,-4.12967 -10.46566,-7.235496 1.43801,6.725289 5.4382,10.602857 5.6157,11.422617 0.18607,0.905508 -0.45961,1.091583 -1.04099,1.682394 -1.28967,1.265654 -6.9156603,7.731122 -6.9336603,9.781382 1.6137903,-0.24782 3.5611503,-1.66096 4.9803003,-2.48586 1.58035,-0.90551 7.60593,-5.37303 9.29347,-6.065025 0.38587,-0.160351 5.0549,-1.531476 5.09434,-0.932948 0.0695,0.932948 -0.30784,1.137031 -0.18436,1.527183 0.22638,0.74602 1.44144,1.46546 2.02282,1.98509 1.50918,1.29224 3.21044,2.42841 4.27373,4.15625 1.49203,2.40183 1.55805,4.999171 1.98251,7.677111 0.99469,-0.11148 2.0091,-2.17545 2.55961,-2.99264 0.51278,-0.7726 2.38639,-4.071361 3.09725,-4.275441 0.67227,-0.20408 2.75511,0.95867 3.50284,1.18076 2.85973,0.84806 5.644,1.35398 8.560317,1.35398 3.50799,0.009 12.726,0.2581 19.55505,-4.80023 0.75545,-0.56766 2.55703,-2.7311 2.55703,-2.7311 0,0 -0.37644,-0.57709 -1.04785,-0.79061 0.89779,-0.58481 1.8659,-1.211632 1.94993,-1.92592 z"
+            fill="#528484"
+          />
+          <path
+            d="m 127.65312,60.900973 c 0.0489,-0.44418 -0.2178,-0.896934 -1.01784,-1.415715 -0.72801,-0.47505 -1.4826,-0.932949 -2.2149,-1.401138 -1.6035,-1.02813 -3.29018,-1.969653 -4.89799,-3.079245 -4.67074,-3.24131 -10.22127,-4.404923 -15.76322,-5.150939 -2.27235,-0.286401 -4.812228,-0.168925 -6.721858,-1.574351 -1.48174,-1.081294 -4.04993,-4.828523 -6.86506,-6.456038 -0.4862,-0.290688 -2.77227,-1.444869 -2.77227,-1.444869 0,0 1.30939,3.550006 1.60951,4.264295 0.69542,1.644664 -0.38158,3.063809 -0.83262,4.642447 -0.29069,1.04185 2.13772,0.8129 2.26463,1.782721 0.18179,1.432007 -4.15197,1.936211 -6.59152,2.417263 -3.65634,0.715146 -7.91635,2.082842 -11.56925,0.884072 -4.3046,-1.383131 -7.37269,-4.12967 -10.46566,-7.235496 1.43801,6.725289 5.4382,10.602857 5.6157,11.422617 0.18607,0.905508 -0.45961,1.091583 -1.04099,1.682394 -1.28967,1.265654 -6.91566,7.731125 -6.93366,9.781382 1.61379,-0.247815 3.56115,-1.660957 4.9803,-2.485862 1.58035,-0.905509 7.60593,-5.373029 9.29347,-6.065023 0.38587,-0.160351 5.0549,-1.531476 5.09434,-0.932948 0.0695,0.932948 -0.30784,1.137031 -0.18436,1.527188 0.22638,0.746016 1.44144,1.46545 2.02282,1.985088 1.50918,1.292237 3.21044,2.42841 4.27373,4.156252 1.49203,2.401827 1.55805,4.999163 1.98251,7.677102 0.99469,-0.111473 2.0091,-2.17545 2.55961,-2.992638 0.51278,-0.772598 2.38639,-4.071359 3.09725,-4.275442 0.67227,-0.204082 2.75511,0.958673 3.50284,1.180763 2.85973,0.848057 5.643998,1.353976 8.560318,1.353976 3.50799,0.0094 12.726,0.258104 19.55506,-4.800226 0.75545,-0.567658 2.55703,-2.731104 2.55703,-2.731104 0,0 -0.37644,-0.57709 -1.04785,-0.790605 0.89779,-0.584808 1.8659,-1.211633 1.94993,-1.925921 z"
+            fill="#528484"
+          />
+          <path
+            d="m 68.19699,20.522295 c 0.0489,-0.44418 -0.2178,-0.896934 -1.01784,-1.415715 -0.72801,-0.47505 -1.4826,-0.932949 -2.2149,-1.401138 -1.6035,-1.02813 -3.29018,-1.969653 -4.89798,-3.079245 C 55.39553,11.384887 49.845,10.221274 44.30305,9.4752582 42.0307,9.1888572 39.49082,9.3063332 37.58119,7.900907 36.09945,6.819613 33.53126,3.072384 30.71613,1.444869 30.22993,1.154181 27.94386,0 27.94386,0 c 0,0 1.30939,3.550006 1.60951,4.264295 0.69542,1.644664 -0.38158,3.063809 -0.83262,4.642447 -0.29069,1.0418502 2.13772,0.8129002 2.26463,1.782721 0.18179,1.432007 -4.15197,1.936211 -6.59152,2.417263 -3.65634,0.715146 -7.91635,2.082842 -11.56925,0.884072 C 8.52001,12.607667 5.45192,9.8611282 2.35895,6.755302 3.79696,13.480591 7.79715,17.358159 7.97465,18.177919 8.16072,19.083427 7.51504,19.269502 6.93366,19.860313 5.64399,21.125967 0.018,27.591438 0,29.641695 1.61379,29.39388 3.56115,27.980738 4.9803,27.155833 c 1.58035,-0.905509 7.60593,-5.373029 9.29347,-6.065023 0.38587,-0.160351 5.0549,-1.531476 5.09434,-0.932948 0.0695,0.932948 -0.30784,1.137031 -0.18436,1.527188 0.22638,0.746016 1.44144,1.46545 2.02282,1.985088 1.50918,1.292237 3.21044,2.42841 4.27373,4.156252 1.49203,2.401827 1.55805,4.999163 1.98251,7.677102 0.99469,-0.111473 2.0091,-2.17545 2.55961,-2.992638 0.51278,-0.772598 2.38639,-4.071359 3.09725,-4.275442 0.67227,-0.204082 2.75511,0.958673 3.50284,1.180763 2.85973,0.848057 5.644,1.353976 8.56032,1.353976 3.50799,0.0094 12.726,0.258104 19.55505,-4.800226 0.75545,-0.567658 2.55703,-2.731104 2.55703,-2.731104 0,0 -0.37644,-0.57709 -1.04785,-0.790605 0.89779,-0.584808 1.8659,-1.211633 1.94993,-1.925921 z"
+            fill="#528484"
+          />
+        </symbol>
+      </defs>
+    </svg>
+
+    <header class="top-hud">
+      <div class="hud-card left-card">
+        <div class="hud-label">DSV / Team</div>
+        <div class="hud-main">Intrusion Survey</div>
+        <div class="hud-sub">Human observation inside the deep ocean column</div>
+      </div>
+
+      <div class="hud-center">
+        <div class="hud-top-frame"></div>
+      </div>
+
+      <div class="hud-card right-card">
+        <div class="hud-label">Zone</div>
+        <div class="hud-main" id="zoneName">Sunlight Zone</div>
+        <div class="hud-sub">Controlled descent / modern submersible interface</div>
+      </div>
+    </header>
+
+    <section class="main-view">
+      <div class="viewport-hud">
+        <div class="arc arc-left-outer"></div>
+        <div class="arc arc-left-inner"></div>
+        <div class="arc arc-right-outer"></div>
+        <div class="arc arc-right-inner"></div>
+
+        <div class="reticle">
+          <div class="reticle-ring"></div>
+          <div class="reticle-cross reticle-cross-h"></div>
+          <div class="reticle-cross reticle-cross-v"></div>
+          <div class="reticle-dot"></div>
+        </div>
+
+        <div class="depth-ladder">
+          <div class="depth-line depth-line-top"></div>
+          <div class="depth-track" id="depthTrack"></div>
+          <div class="depth-line depth-line-bottom"></div>
+
+          <div class="depth-readout">
+            <span id="depthValue">0</span>
+            <small>m</small>
+          </div>
+        </div>
+
+        <div class="side-data side-left">
+          <div class="data-box modern-box">
+            <span class="data-title">Visibility</span>
+            <strong id="visibilityValue">High</strong>
+            <p class="data-note">Water clarity, particles, and obstruction from artificial light.</p>
+          </div>
+
+          <div class="data-box modern-box">
+            <span class="data-title">Pressure</span>
+            <strong id="pressureValue">1 atm</strong>
+            <p class="data-note">External pressure increases with descent through the water column.</p>
+          </div>
+
+          <div class="data-box modern-box oxygen-box">
+            <span class="data-title">Oxygen Level</span>
+            <strong id="oxygenValue">98%</strong>
+            <div class="oxygen-meter">
+              <div id="oxygenFill" class="oxygen-fill"></div>
+            </div>
+            <p id="oxygenMode" class="data-note">Normal glow behavior / oxygen not yet limiting output.</p>
+          </div>
+        </div>
+
+        <div class="side-data side-right">
+          <div class="data-box modern-box interactive-box">
+            <div class="data-header-row">
+              <span class="data-title">Bio Activity</span>
+              <button class="info-btn" data-info="bio">i</button>
+            </div>
+            <strong id="bioValue">Low</strong>
+            <p class="data-note" id="bioHelp">Bioluminescent activity visible in the current zone.</p>
+          </div>
+
+          <div class="data-box modern-box interactive-box">
+            <div class="data-header-row">
+              <span class="data-title">Temp</span>
+              <button class="info-btn" data-info="temp">i</button>
+            </div>
+            <strong id="tempValue">14°C</strong>
+            <p class="data-note" id="tempHelp">Thermal condition around the vehicle and nearby organisms.</p>
+          </div>
+
+          <div class="data-box modern-box interactive-box">
+            <div class="data-header-row">
+              <span class="data-title">Floodlight</span>
+              <button class="info-btn" data-info="light">i</button>
+            </div>
+            <strong id="floodState">WHITE</strong>
+            <p class="data-note" id="lightHelp">Current observation light mode used by the submersible.</p>
+          </div>
+        </div>
+
+        <div id="secretCard" class="secret-card">
+          <div class="secret-head">Red-Light Observation</div>
+          <div class="secret-body">
+            Stoplight loosejaw behavior visible. Red illumination reveals predatory “private” signaling without fully alarming nearby blue/green-sensitive fauna.
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="cockpit">
+      <div class="cockpit-glow"></div>
+
+      <div class="console left-console">
+        <div class="screen small-screen data-style-card">
+          <div class="screen-title">Debris / Net Scan</div>
+          <div class="scan-block">
+            <div class="scan-percent" id="debrisPercent">12%</div>
+            <div class="scan-copy">Floating waste and ghost gear become more visible when harsh white beams strike synthetic surfaces.</div>
+          </div>
+        </div>
+
+        <div class="panel-switches">
+          <button class="tiny-btn">SONAR</button>
+          <button class="tiny-btn">SCAN</button>
+          <button class="tiny-btn">LOG</button>
+        </div>
+      </div>
+
+      <div class="pilot-core">
+        <div class="pilot-top-screen" id="radarScreen">
+          <div class="radar-ring radar-ring-1"></div>
+          <div class="radar-ring radar-ring-2"></div>
+          <div class="radar-sweep"></div>
+          <div class="radar-grid-h"></div>
+          <div class="radar-grid-v"></div>
+
+          <div class="radar-dot radar-dot-1"></div>
+          <div class="radar-dot radar-dot-2"></div>
+          <div class="radar-dot radar-dot-3"></div>
+
+          <button id="miningBlip" class="mining-blip" aria-label="Mining vehicle">
+            <span class="drill-body"></span>
+            <span class="drill-arm arm-left"></span>
+            <span class="drill-arm arm-right"></span>
+            <span class="drill-bit"></span>
+          </button>
+        </div>
+
+        <div class="pilot-controls">
+          <div class="switch-block">
+            <div class="switch-label">Light Mode</div>
+            <div class="light-mode-group">
+              <button id="whiteModeBtn" class="mode-btn active">WHITE</button>
+              <button id="offModeBtn" class="mode-btn">OFF</button>
+              <button id="redModeBtn" class="mode-btn">RED</button>
+            </div>
+          </div>
+
+          <div class="switch-block">
+            <div class="switch-label">Stabilizers</div>
+            <button class="sys-btn active">AUTO</button>
+          </div>
+
+          <div class="switch-block">
+            <div class="switch-label">Threat Console</div>
+            <button id="miningAlarmBtn" class="sys-btn mining-alert-btn">MINING ALERT</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="console right-console">
+        <div class="screen small-screen data-style-card">
+          <div class="screen-title">Metabolic Monitor</div>
+          <div class="scan-block">
+            <div class="scan-percent" id="glowPercent">100%</div>
+            <div class="scan-copy" id="energyText">Normal activity. Bioluminescent output is not yet strongly oxygen-limited.</div>
+          </div>
+        </div>
+
+        <div class="panel-switches">
+          <button id="alarmQuickBtn" class="tiny-btn mining-alert-tiny">ALERT</button>
+          <button class="tiny-btn">CAM</button>
+          <button class="tiny-btn">MAP</button>
+        </div>
+      </div>
+    </section>
+
+    <div id="infoPopup" class="info-popup hidden">
+      <div class="info-popup-head" id="infoPopupTitle">Info</div>
+      <div class="info-popup-body" id="infoPopupBody"></div>
+      <button id="closeInfoPopup" class="close-popup-btn">Close</button>
+    </div>
+
+    <div id="miningPopupOverlay" class="mining-popup-overlay hidden">
+      <div class="mining-popup-panel">
+        <div class="mining-popup-header">
+          <div class="mining-popup-kicker">Threat Report</div>
+          <h2 class="mining-popup-title">Deep-Sea Mining</h2>
+          <button id="closeMiningPopup" class="close-mining-popup-btn">Close</button>
+        </div>
+
+        <div class="mining-popup-content">
+          <div class="mining-popup-image-col">
+            <img src="p1.png" alt="Deep sea mining vehicle" class="mining-popup-image" />
+          </div>
+
+          <div class="mining-popup-text-col">
+            <h3 class="mining-popup-subtitle">Why it is dangerous</h3>
+            <div id="miningPopupBody" class="mining-popup-body"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script src="sketch.js"></script>
+</body>
+</html>
